@@ -6,173 +6,123 @@
   is strictly prohibited without written permission.
 */
 
-
-// options.js
-
-const textarea = document.getElementById("patterns");
-const saveBtn = document.getElementById("save");
-const statusEl = document.getElementById("status");
-const previewBody = document.getElementById("preview-body");
-const examplesToggle = document.getElementById("examples-toggle");
-const examplesBody = document.getElementById("examples-body");
-const helpIcon = document.getElementById("help-icon");
-const helpDialog = document.getElementById("help-dialog");
-const helpClose = document.getElementById("help-close");
-
-const DEFAULT_PATTERNS = [].join("\n");
-
-function setStatus(msg, kind = "info") {
-  statusEl.textContent = msg;
-  statusEl.className = "status " + kind;
+// Small helper to normalise textarea → array of patterns
+function getPatternsFromTextarea(text) {
+  return text
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line => line.length > 0);
 }
 
-// Load saved patterns
-chrome.storage.sync.get({ patterns: DEFAULT_PATTERNS }, ({ patterns }) => {
-  textarea.value = patterns;
-  renderPreview();
-});
-
-async function rebuildRulesFromPatterns(patternLines) {
-  const existing = await chrome.declarativeNetRequest.getDynamicRules();
-  const removeRuleIds = existing.map(r => r.id);
-
-  const addRules = [];
-  let nextId = 1;
-
-  for (const raw of patternLines) {
-    const line = raw.trim();
-    if (!line) continue;
-
-    const rule = {
-      id: nextId++,
-      priority: 1,
-      action: { type: "block" },
-      condition: {
-        resourceTypes: ["main_frame", "sub_frame"]
-      }
-    };
-
-    if (line.startsWith("re:")) {
-      const pattern = line.slice(3);
-
-      // validate regex so a bad pattern doesn't break everything
-      try {
-        // eslint-disable-next-line no-new
-        new RegExp(pattern);
-      } catch (e) {
-        console.warn(`Skipping invalid regex "${line}":`, e);
-        continue;
-      }
-
-      rule.condition.regexFilter = pattern;
-    } else {
-      let normalized = line
-        .replace(/^\s*\*+/, "")            // trim leading *
-        .replace(/^https?:\/\//i, "")      // strip protocol
-        .replace(/^www\./i, "");           // strip www.
-
-      if (!normalized) continue;
-
-      rule.condition.urlFilter = "||" + normalized;
-    }
-
-    addRules.push(rule);
+// Build preview text for one pattern
+function describePattern(pattern) {
+  if (pattern.startsWith('re:')) {
+    return `Regex match: ${pattern.slice(3)}`;
   }
 
-  return chrome.declarativeNetRequest.updateDynamicRules({
-    removeRuleIds,
-    addRules
-  });
+  // Very simple guess: if it has a dot, treat as domain-ish, else substring
+  if (pattern.includes('.')) {
+    return `Blocks any URL containing "${pattern}" (e.g. https://…${pattern}…)`;
+  }
+  return `Blocks any URL containing "${pattern}" in the host or path.`;
 }
 
-saveBtn.addEventListener("click", async () => {
-  const rawText = textarea.value || "";
-  const lines = rawText.split("\n");
+function renderPreview(patterns) {
+  const previewBody = document.getElementById('preview-body');
+  if (!previewBody) return;
 
-  const trimmed = lines.map(l => l.trim()).filter(Boolean);
+  previewBody.innerHTML = '';
 
-  setStatus("Saving…", "info");
+  patterns.forEach(p => {
+    const row = document.createElement('div');
+    row.className = 'preview-row';
 
-  try {
-    await chrome.storage.sync.set({ patterns: trimmed.join("\n") });
-    await rebuildRulesFromPatterns(trimmed);
-    setStatus("Saved and blocking list updated ✔", "ok");
-  } catch (e) {
-    console.error("Error updating rules", e);
-    setStatus(
-      "Error updating blocking rules: " + (e && e.message ? e.message : e),
-      "error"
-    );
-  }
+    const title = document.createElement('div');
+    title.className = 'preview-pattern';
+    title.textContent = p;
 
-  renderPreview();
-});
+    const desc = document.createElement('div');
+    desc.className = 'preview-desc';
+    desc.textContent = describePattern(p);
 
-function describePattern(line) {
-  if (!line.trim()) return "";
-
-  if (line.startsWith("re:")) {
-    const pattern = line.slice(3);
-    return `Blocks any URL matching regex /${pattern}/`;
-  }
-
-  let normalized = line
-    .replace(/^\s*\*+/, "")
-    .replace(/^https?:\/\//i, "")
-    .replace(/^www\./i, "");
-
-  if (!normalized) {
-    return "Empty or unsupported pattern.";
-  }
-
-  return `Blocks any URL containing "${normalized}" (e.g. https://…${normalized}…)`;
-}
-
-function renderPreview() {
-  const lines = (textarea.value || "").split("\n");
-  previewBody.innerHTML = "";
-
-  lines.forEach(raw => {
-    const line = raw.trim();
-    if (!line) return;
-
-    const row = document.createElement("div");
-    row.className = "preview-row";
-
-    const patternEl = document.createElement("div");
-    patternEl.className = "preview-pattern";
-    patternEl.textContent = line;
-
-    const descEl = document.createElement("div");
-    descEl.className = "preview-desc";
-    descEl.textContent = describePattern(line);
-
-    row.appendChild(patternEl);
-    row.appendChild(descEl);
+    row.appendChild(title);
+    row.appendChild(desc);
     previewBody.appendChild(row);
   });
 }
 
-textarea.addEventListener("input", () => {
-  renderPreview();
-  setStatus("");
-});
+document.addEventListener('DOMContentLoaded', async () => {
+  const textarea = document.getElementById('patterns');
+  const statusEl = document.getElementById('status');
+  const saveBtn = document.getElementById('save');
+  const examplesToggle = document.getElementById('examples-toggle');
+  const examplesBody = document.getElementById('examples-body');
+  const helpIcon = document.getElementById('help-icon');
+  const helpDialog = document.getElementById('help-dialog');
+  const helpClose = document.getElementById('help-close');
 
-// examples toggle
-examplesToggle.addEventListener("click", () => {
-  const open = examplesBody.classList.toggle("open");
-  examplesToggle.classList.toggle("open", open);
-  const labelSpan = examplesToggle.querySelector("span:nth-child(2)");
-  if (labelSpan) {
-    labelSpan.textContent = open ? "Hide examples" : "Show examples";
+  // Load existing patterns from sync storage
+  try {
+    const { blockedPatterns = [] } = await chrome.storage.sync.get('blockedPatterns');
+    textarea.value = blockedPatterns.join('\n');
+    renderPreview(blockedPatterns);
+  } catch (err) {
+    console.error('[SimpleBlocker] Failed to load patterns from storage', err);
+    if (statusEl) {
+      statusEl.textContent = 'Error loading saved patterns.';
+      statusEl.className = 'status error';
+    }
   }
-});
 
-// help dialog
-helpIcon.addEventListener("click", () => {
-  helpDialog.showModal();
-});
+  // Update preview live as user types
+  textarea.addEventListener('input', () => {
+    const patterns = getPatternsFromTextarea(textarea.value);
+    renderPreview(patterns);
 
-helpClose.addEventListener("click", () => {
-  helpDialog.close();
+    if (statusEl) {
+      statusEl.textContent = '';
+      statusEl.className = 'status';
+    }
+  });
+
+  // Save button → ONLY writes to storage.
+  // Background script listens to storage changes and rebuilds DNR rules.
+  saveBtn.addEventListener('click', async () => {
+    const patterns = getPatternsFromTextarea(textarea.value);
+
+    try {
+      await chrome.storage.sync.set({ blockedPatterns: patterns });
+      if (statusEl) {
+        statusEl.textContent = 'Saved and blocking list updated ✓';
+        statusEl.className = 'status ok';
+      }
+    } catch (err) {
+      console.error('[SimpleBlocker] Failed to save patterns', err);
+      if (statusEl) {
+        statusEl.textContent = 'Error saving patterns.';
+        statusEl.className = 'status error';
+      }
+    }
+  });
+
+  // Examples collapsible
+  if (examplesToggle && examplesBody) {
+    examplesToggle.addEventListener('click', () => {
+      const isOpen = examplesBody.classList.toggle('open');
+      examplesToggle.classList.toggle('open', isOpen);
+    });
+  }
+
+  // Help dialog
+  if (helpIcon && helpDialog && helpClose) {
+    helpIcon.addEventListener('click', () => {
+      if (typeof helpDialog.showModal === 'function') {
+        helpDialog.showModal();
+      }
+    });
+
+    helpClose.addEventListener('click', () => {
+      helpDialog.close();
+    });
+  }
 });
