@@ -5,10 +5,7 @@
 
 const RULE_ID_START = 1;
 
-/**
- * Turn the saved patterns into declarativeNetRequest redirect rules
- * that send the user to /blocked.html inside this extension.
- */
+/* Convert patterns → redirect rules */
 function buildRulesFromPatterns(patterns) {
   const rules = [];
   let nextId = RULE_ID_START;
@@ -25,22 +22,16 @@ function buildRulesFromPatterns(patterns) {
       action: {
         type: "redirect",
         redirect: {
-          // blocked.html inside this extension
-          extensionPath: "/blocked.html",
-        },
+          extensionPath: "/blocked.html"
+        }
       },
       condition: {
-        resourceTypes: ["main_frame"], // only top-level pages
-      },
+        resourceTypes: ["main_frame"]
+      }
     };
 
-    if (isRegex) {
-      // Strip "re:" and use regexFilter
-      baseRule.condition.regexFilter = trimmed.slice(3);
-    } else {
-      // Simple pattern – use directly as urlFilter
-      baseRule.condition.urlFilter = trimmed;
-    }
+    if (isRegex) baseRule.condition.regexFilter = trimmed.slice(3);
+    else baseRule.condition.urlFilter = trimmed;
 
     rules.push(baseRule);
   }
@@ -48,43 +39,73 @@ function buildRulesFromPatterns(patterns) {
   return rules;
 }
 
-/**
- * Read patterns from storage and replace ALL dynamic rules with
- * redirect rules built from those patterns.
- */
-async function rebuildRulesFromStorage() {
-  const { blockedPatterns = [] } = await chrome.storage.sync.get("blockedPatterns");
+/* Rebuild rules — but DO NOT wipe if patterns unavailable */
+async function rebuildRulesSafe() {
+  const data = await chrome.storage.sync.get(null);
 
-  const currentRules = await chrome.declarativeNetRequest.getDynamicRules();
-  const ruleIdsToRemove = currentRules.map(r => r.id);
-  const rulesToAdd = buildRulesFromPatterns(blockedPatterns);
+  if (!data || !("blockedPatterns" in data)) {
+    console.warn("[SimpleBlocker] blockedPatterns not ready yet — skipping rebuild.");
+    return false;
+  }
+
+  const patterns = data.blockedPatterns || [];
+
+  const current = await chrome.declarativeNetRequest.getDynamicRules();
+  const removeIds = current.map(r => r.id);
+  const addRules = buildRulesFromPatterns(patterns);
 
   await chrome.declarativeNetRequest.updateDynamicRules({
-    removeRuleIds: ruleIdsToRemove,
-    addRules: rulesToAdd,
+    removeRuleIds: removeIds,
+    addRules
   });
 
-  console.log(
-    `[SimpleBlocker] Rebuilt ${rulesToAdd.length} rules from ${blockedPatterns.length} patterns.`
-  );
+  console.log(`[SimpleBlocker] Rebuilt ${addRules.length} blocking rules.`);
+  return true;
 }
 
-/**
- * On install/update, build rules once from whatever is in storage.
- * (Dynamic rules are persisted across browser restarts, so we do NOT
- * need to rebuild them on every startup.)
- */
-chrome.runtime.onInstalled.addListener((details) => {
-  console.log(`[SimpleBlocker] onInstalled: reason=${details.reason} — rebuilding rules.`);
-  rebuildRulesFromStorage();
+/* Ensure rules exist — if not, retry a few times */
+async function ensureRules() {
+  const existing = await chrome.declarativeNetRequest.getDynamicRules();
+
+  if (existing.length > 0) {
+    console.log(`[SimpleBlocker] Rules already loaded (${existing.length}).`);
+    return;
+  }
+
+  console.warn("[SimpleBlocker] No rules present — attempting rebuild.");
+
+  let success = await rebuildRulesSafe();
+
+  if (!success) {
+    console.warn("[SimpleBlocker] Storage not ready. Retrying in 1 second…");
+    setTimeout(async () => {
+      let secondTry = await rebuildRulesSafe();
+      if (!secondTry) {
+        console.error("[SimpleBlocker] Could NOT rebuild rules — storage never loaded.");
+      }
+    }, 1000);
+  }
+}
+
+/* On first install */
+chrome.runtime.onInstalled.addListener(() => {
+  console.log("[SimpleBlocker] onInstalled → force rebuild");
+  rebuildRulesSafe();
 });
 
-/**
- * Whenever the user changes patterns (via the options page), rebuild rules.
- */
+/* On browser startup */
+chrome.runtime.onStartup.addListener(() => {
+  console.log("[SimpleBlocker] onStartup → ensure rules");
+  ensureRules();
+});
+
+/* When patterns change */
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === "sync" && changes.blockedPatterns) {
     console.log("[SimpleBlocker] blockedPatterns changed — rebuilding rules.");
-    rebuildRulesFromStorage();
+    rebuildRulesSafe();
   }
 });
+
+/* When service worker is created */
+ensureRules();
