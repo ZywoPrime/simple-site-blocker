@@ -101,6 +101,7 @@ This is normal for DNR-based blocking.
 ---
 
 ## 📄 File Structure
+```
 simple-site-blocker/
 │
 ├── manifest.json
@@ -112,7 +113,7 @@ simple-site-blocker/
 ├── icon16.png
 ├── icon48.png
 └── icon128.png
-
+```
 
 ---
 
