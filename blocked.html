@@ -1,0 +1,241 @@
+<!--
+  Copyright (c) 2025 Daniel Aistrop
+  All Rights Reserved.
+
+  Unauthorized copying, modification, distribution, or use of this file
+  is strictly prohibited without written permission.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Blocked by Simple Site Blocker</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #050816;
+      --bg-card: #0b1220;
+      --border: #1e293b;
+      --accent: #f97373;
+      --accent-soft: rgba(248, 113, 113, 0.12);
+      --text-main: #e5e7eb;
+      --text-soft: #9ca3af;
+      --text-subtle: #6b7280;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: radial-gradient(circle at top, #020617 0, #020617 35%, #000 100%);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      width: min(640px, 100% - 48px);
+      padding: 32px 28px 24px;
+      border-radius: 20px;
+      background:
+        radial-gradient(circle at top left, rgba(248, 113, 113, 0.18), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.16), transparent 60%),
+        var(--bg-card);
+      border: 1px solid var(--border);
+      box-shadow:
+        0 18px 40px rgba(15, 23, 42, 0.85),
+        0 0 0 1px rgba(15, 23, 42, 0.7);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      font-size: 11px;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--text-subtle);
+      margin-bottom: 16px;
+    }
+
+    .badge span {
+      margin-left: 6px;
+    }
+
+    .icon-wrap {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      background: radial-gradient(circle at 30% 0%, #f97373, #b91c1c);
+      box-shadow:
+        0 12px 25px rgba(248, 113, 113, 0.35),
+        0 0 0 1px rgba(148, 27, 54, 0.7);
+      margin-bottom: 14px;
+    }
+
+    .icon {
+      font-size: 24px;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin: 0 0 8px;
+    }
+
+    .subtitle {
+      margin: 0 0 18px;
+      font-size: 14px;
+      color: var(--text-soft);
+    }
+
+    .hint {
+      margin: 0 0 22px;
+      font-size: 13px;
+      color: var(--text-subtle);
+      line-height: 1.5;
+    }
+
+    .hint strong {
+      color: var(--text-soft);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 9px 16px;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.15s ease, transform 0.08s ease,
+        box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #ef4444, #f97316);
+      color: #111827;
+      font-weight: 600;
+      box-shadow:
+        0 12px 30px rgba(248, 113, 113, 0.45),
+        0 0 0 1px rgba(127, 29, 29, 0.7);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 16px 35px rgba(248, 113, 113, 0.55),
+        0 0 0 1px rgba(127, 29, 29, 0.9);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+      box-shadow:
+        0 6px 15px rgba(248, 113, 113, 0.4),
+        0 0 0 1px rgba(127, 29, 29, 0.9);
+    }
+
+    .btn-secondary {
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-soft);
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(15, 23, 42, 0.95);
+      border-color: rgba(148, 163, 184, 0.7);
+      color: var(--text-main);
+    }
+
+    .btn-secondary:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    .footer {
+      font-size: 11px;
+      color: var(--text-subtle);
+      margin-top: 8px;
+    }
+
+    .footer b {
+      color: var(--text-soft);
+      font-weight: 500;
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 24px 18px 18px;
+      }
+      h1 {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="badge">
+      🔒 <span>Simple Site Blocker</span>
+    </div>
+
+    <div class="icon-wrap">
+      <div class="icon">🚫</div>
+    </div>
+
+    <h1>Hold up – you blocked this site.</h1>
+
+    <p class="subtitle">
+      Simple Site Blocker is hiding this page because it matches one of your
+      <strong>blocked patterns</strong>.
+    </p>
+
+    <p class="hint">
+      This is your future self saying “thanks”. If you really didn’t mean to
+      block this, you can tweak your list below. Otherwise, close the tab and
+      keep your focus streak going. 🧠✨
+    </p>
+
+    <div class="actions">
+      <button id="openOptions" class="btn-primary">
+        ✏️ Edit blocked sites
+      </button>
+      <button id="goBack" class="btn-secondary">
+        ⬅ Back to safety
+      </button>
+    </div>
+
+    <p class="footer">
+      You can change these rules anytime in
+      <b>Settings → Extensions → Simple Site Blocker → Extension options</b>.
+    </p>
+  </main>
+
+    <!-- Use external JS file (inline scripts are blocked in MV3) -->
+  <script src="blocked.js"></script>
+
+  </script>
+</body>
+</html>

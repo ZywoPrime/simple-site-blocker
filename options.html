@@ -1,0 +1,470 @@
+<!--
+  Copyright (c) 2025 Daniel Aistrop
+  All Rights Reserved.
+
+  Unauthorized copying, modification, distribution, or use of this file
+  is strictly prohibited without written permission.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Simple Site Blocker – Options</title>
+  <style>
+    :root {
+      color-scheme: dark light;
+      --bg: #020617;
+      --bg-elevated: #020617;
+      --bg-panel: #020617;
+      --border-subtle: #1f2937;
+      --border-strong: #4b5563;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --accent: #ef4444;
+      --accent-soft: rgba(248, 113, 113, 0.16);
+      --accent-strong: #b91c1c;
+      --warning: #facc15;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f3f4f6;
+        --bg-elevated: #ffffff;
+        --bg-panel: #f9fafb;
+        --border-subtle: #e5e7eb;
+        --border-strong: #9ca3af;
+        --text-main: #111827;
+        --text-muted: #4b5563;
+        --accent: #dc2626;
+        --accent-soft: rgba(248, 113, 113, 0.08);
+        --accent-strong: #b91c1c;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #020617 0, #020617 40%, #020617 100%);
+      color: var(--text-main);
+    }
+
+    body {
+      padding: 20px;
+    }
+
+    .card {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--bg-elevated);
+      border-radius: 18px;
+      padding: 24px 28px 24px 28px;
+      border: 1px solid var(--border-subtle);
+      box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(148, 163, 184, 0.1);
+    }
+
+    h1 {
+      margin: 0 0 6px 0;
+      font-size: 1.6rem;
+      letter-spacing: 0.02em;
+    }
+
+    .subtitle {
+      margin: 0 0 20px 0;
+      font-size: 0.92rem;
+      color: var(--text-muted);
+    }
+
+    h2 {
+      margin: 18px 0 8px 0;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .help-icon {
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      border: 1px solid var(--border-strong);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      background: radial-gradient(circle at top, rgba(255,255,255,0.18), transparent 60%);
+    }
+
+    .help-text {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .help-text code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.8rem;
+      background: rgba(15, 23, 42, 0.65);
+      border-radius: 6px;
+      padding: 2px 5px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+    }
+
+    .help-text b {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .warning {
+      margin-top: 10px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .warning-icon {
+      color: var(--warning);
+      margin-top: 1px;
+    }
+
+    /* Examples toggle */
+    .examples-header {
+      margin-top: 14px;
+    }
+
+    #examples-toggle {
+      margin-top: 6px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.86rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      padding: 2px 0;
+    }
+
+    #examples-toggle span.chevron {
+      font-size: 0.7rem;
+      transition: transform 0.15s ease;
+    }
+
+    #examples-toggle.open span.chevron {
+      transform: rotate(90deg);
+    }
+
+    #examples-body {
+      display: none;
+      margin-top: 6px;
+      padding: 10px 12px;
+      background: var(--bg-panel);
+      border-radius: 10px;
+      border: 1px dashed var(--border-subtle);
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    #examples-body.open {
+      display: block;
+    }
+
+    #examples-body code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.78rem;
+      background: rgba(15, 23, 42, 0.65);
+      border-radius: 5px;
+      padding: 2px 5px;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      margin-right: 4px;
+    }
+
+    /* Layout for patterns + preview */
+    .patterns-grid {
+      margin-top: 18px;
+      display: flex;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .patterns-col,
+    .preview-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    textarea#patterns {
+      width: 100%;
+      flex: 1;
+      min-height: 220px;
+      max-height: 260px;
+      resize: vertical;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.86rem;
+      background: var(--bg-panel);
+      border-radius: 12px;
+      border: 1px solid var(--border-strong);
+      padding: 10px 12px;
+      color: var(--text-main);
+      outline: none;
+    }
+
+    textarea#patterns:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.8);
+    }
+
+    /* Preview panel */
+    .preview-panel {
+      background: var(--bg-panel);
+      border-radius: 12px;
+      padding: 8px 10px;
+      border: 1px solid var(--border-strong);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.8rem;
+
+      /* scrolling behaviour */
+      max-height: 260px;
+      min-height: 220px;
+      overflow-y: auto;
+    }
+
+    .preview-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+      padding-bottom: 4px;
+    }
+
+    .preview-row {
+      margin-bottom: 6px;
+      padding: 4px 4px 4px 2px;
+      border-radius: 6px;
+    }
+
+    .preview-row:nth-child(odd) {
+      background: rgba(15, 23, 42, 0.4);
+    }
+
+    .preview-pattern {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .preview-desc {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    /* Save button + status */
+    .footer-row {
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    #save {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 18px;
+      background: radial-gradient(circle at top left, #f97373, #b91c1c 60%);
+      color: #f9fafb;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow:
+        0 12px 30px rgba(248, 113, 113, 0.4),
+        0 0 0 1px rgba(248, 113, 113, 0.25);
+    }
+
+    #save:hover {
+      filter: brightness(1.05);
+    }
+
+    .status {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+    }
+
+    .status.ok {
+      color: #22c55e;
+    }
+
+    .status.error {
+      color: #f97373;
+    }
+
+    .status.info {
+      color: var(--text-muted);
+    }
+
+    /* Help dialog */
+    dialog#help-dialog {
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 18px 20px 14px 20px;
+      background: var(--bg-elevated);
+      color: var(--text-main);
+      max-width: 420px;
+      box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(148, 163, 184, 0.4);
+    }
+
+    dialog::backdrop {
+      background: rgba(15, 23, 42, 0.65);
+    }
+
+    #help-dialog h3 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 1rem;
+    }
+
+    #help-dialog p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin: 4px 0;
+    }
+
+    #help-dialog code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.8rem;
+      background: rgba(15, 23, 42, 0.75);
+      border-radius: 5px;
+      padding: 2px 5px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+    }
+
+    #help-close {
+      margin-top: 10px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border-strong);
+      background: var(--bg-panel);
+      color: var(--text-main);
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
+
+    #help-close:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    @media (max-width: 720px) {
+      .card {
+        padding: 18px 16px;
+      }
+      .patterns-grid {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Simple Site Blocker</h1>
+    <p class="subtitle">Block distracting or adult sites with simple patterns.</p>
+
+    <h2>
+      Blocked patterns
+      <button id="help-icon" class="help-icon" type="button" title="Pattern help">?</button>
+    </h2>
+
+    <p class="help-text">
+      ✏️ Enter <b>one pattern per line.</b><br>
+      – You can enter a <b>full domain</b>, e.g. <code>helloworld.com</code><br>
+      – Or a <b>partial word</b>, e.g. <code>helloworld</code>, to match any URL that contains that text<br>
+      – For advanced matching, start a line with <code>re:</code> to use a regular expression<br>
+      <span style="opacity:0.8;">Example:</span>
+      <code>re:^https?://(www\\.)?helloworld\\.com/.*$</code>
+    </p>
+
+    <div class="warning">
+      <span class="warning-icon">⚠️</span>
+      <span>
+        If a site you've added still loads, clear that site's cached data/cookies or open it in a new window.
+        Browsers sometimes reuse cached pages which bypass blocking until refreshed.
+      </span>
+    </div>
+
+    <div class="examples-header">
+      <button id="examples-toggle" type="button">
+        <span class="chevron">▶</span>
+        <span>Show examples</span>
+      </button>
+      <div id="examples-body">
+        <p>Common patterns:</p>
+        <p>
+          <code>example.com</code> – blocks any URL containing <code>example.com</code><br>
+          <code>example</code> – blocks any URL whose host contains <code>example</code><br>
+          <code>re:^https?://(www\\.)?example\\.com/.*$</code> – blocks only full URLs under <code>example.com</code>
+        </p>
+        <p style="margin-top:6px;">
+          You can mix simple and regex patterns in the same list.
+        </p>
+      </div>
+    </div>
+
+    <div class="patterns-grid">
+      <div class="patterns-col">
+        <textarea id="patterns" spellcheck="false"></textarea>
+      </div>
+      <div class="preview-col">
+        <div class="preview-panel">
+          <div class="preview-title">Pattern preview</div>
+          <div id="preview-body"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-row">
+      <button id="save" type="button">
+        💾 Save
+      </button>
+      <span id="status" class="status"></span>
+    </div>
+  </div>
+
+  <!-- Help dialog -->
+  <dialog id="help-dialog">
+    <h3>How patterns work</h3>
+    <p>
+      <b>Simple patterns</b> match by substring. If you enter
+      <code>helloWorld.com</code>, it will block any URL that contains that text
+      (e.g. <code>https://helloWorld.com</code>, <code>https://www.helloWorld.com/…</code>).
+    </p>
+    <p>
+      If you enter just <code>helloWorld</code>, it will block any URL whose host
+      contains that text (e.g. <code>helloWorld.com</code>, <code>myhelloWorld.net</code>).
+    </p>
+    <p>
+      <b>Regex patterns</b> start with <code>re:</code> and let you write full
+      regular expressions, for example:
+      <code>re:^https?://(www\\.)?helloWorld\\.com/.*$</code>.
+    </p>
+    <button id="help-close" type="button">Close</button>
+  </dialog>
+
+  <script src="options.js"></script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!--
+  Copyright (c) 2025 Daniel Aistrop
+  All Rights Reserved.
+
+  Unauthorized copying, modification, distribution, or use of this file
+  is strictly prohibited without written permission.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Simple Site Blocker</title>
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    body {
+      margin: 0;
+      padding: 10px 12px;
+      background: #0f172a;
+      color: #e5e7eb;
+      min-width: 220px;
+    }
+    h1 {
+      font-size: 0.95rem;
+      margin: 0 0 6px;
+    }
+    p {
+      font-size: 0.78rem;
+      margin: 0 0 10px;
+      color: #9ca3af;
+    }
+    button {
+      border-radius: 999px;
+      border: none;
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      background: linear-gradient(135deg, #ef4444, #b91c1c);
+      color: white;
+      box-shadow: 0 8px 18px rgba(185, 28, 28, 0.45);
+    }
+    button:hover {
+      filter: brightness(1.05);
+    }
+  </style>
+</head>
+<body>
+  <h1>Simple Site Blocker</h1>
+  <p>Manage which sites are blocked.</p>
+  <button id="open-options">✏️ Edit blocked sites</button>
+
+  <script src="popup.js"></script>
+</body>
+</html>
