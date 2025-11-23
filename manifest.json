@@ -3,20 +3,37 @@
   "name": "Simple Site Blocker",
   "version": "1.0",
   "description": "Block distracting or adult sites with simple patterns.",
-  "permissions": ["declarativeNetRequestWithHostAccess", "storage"],
+
+  "permissions": [
+    "declarativeNetRequestWithHostAccess",
+    "storage"
+  ],
   "host_permissions": ["<all_urls>"],
+
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "src/background.js"
   },
-  "options_page": "options.html",
+
+  "options_page": "pages/options.html",
+
+  "action": {
+    "default_popup": "pages/popup.html",
+    "default_icon": {
+      "16": "assets/icon16.png",
+      "48": "assets/icon48.png",
+      "128": "assets/icon128.png"
+    }
+  },
+
   "icons": {
-    "16": "icon16.png",
-    "48": "icon48.png",
-    "128": "icon128.png"
+    "16": "assets/icon16.png",
+    "48": "assets/icon48.png",
+    "128": "assets/icon128.png"
   },
+
   "web_accessible_resources": [
     {
-      "resources": ["blocked.html", "blocked.js"],
+      "resources": ["pages/blocked.html"],
       "matches": ["<all_urls>"]
     }
   ]
