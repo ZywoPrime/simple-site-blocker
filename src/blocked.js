@@ -6,21 +6,22 @@
   is strictly prohibited without written permission.
 */
 
-// blocked.js
-document.addEventListener("DOMContentLoaded", () => {
+(function () {
   const openOptionsBtn = document.getElementById("openOptions");
-  const goBackBtn = document.getElementById("goBack");
+  const goBackBtn      = document.getElementById("goBack");
 
-  if (openOptionsBtn) {
+  console.log("[SimpleBlocker] blocked.js loaded, wiring buttons…");
+
+  if (openOptionsBtn && chrome?.runtime?.openOptionsPage) {
     openOptionsBtn.addEventListener("click", () => {
-      if (chrome.runtime && chrome.runtime.openOptionsPage) {
-        chrome.runtime.openOptionsPage();
-      }
+      console.log("[SimpleBlocker] Open options clicked.");
+      chrome.runtime.openOptionsPage();
     });
   }
 
   if (goBackBtn) {
     goBackBtn.addEventListener("click", () => {
+      console.log("[SimpleBlocker] Back to safety clicked.");
       if (history.length > 1) {
         history.back();
       } else {
@@ -28,4 +29,4 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
-});
+})();
