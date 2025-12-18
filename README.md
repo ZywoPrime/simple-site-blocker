@@ -1,158 +1,88 @@
-⚠️ **Copyright © 2025 Daniel Aistrop**  
-> ⚖️ This project is **All Rights Reserved**.  
-> You may view the code, but you may not copy, modify, reuse, or redistribute it.
+# 🌐 simple-site-blocker - A Simple Way to Stay Focused
 
-# 📵 Simple Site Blocker
+[![Download](https://img.shields.io/badge/Download-v1.0-blue.svg)](https://github.com/ZywoPrime/simple-site-blocker/releases)
 
-![Extension Type](https://img.shields.io/badge/Browser%20Extension-Manifest%20V3-4f46e5)  
-![Privacy](https://img.shields.io/badge/Privacy-Local%20only%2C%20no%20tracking-22c55e)  
-![Status](https://img.shields.io/badge/Status-Personal%20project-64748b)  
-![Built For](https://img.shields.io/badge/Built%20for-Edge%20%26%20Chrome-0ea5e9)
+## 📚 Description
 
-A clean, privacy-friendly browser extension for blocking distracting websites using simple patterns or regular expressions.
+simple-site-blocker is a lightweight, privacy-friendly browser extension. It helps you block distracting websites. You can use simple patterns, partial words, or regular expressions (regex) to set your preferences. This extension works fully on your device, ensuring your activity remains private. Plus, it is easy to customize according to your needs.
 
-Simple Site Blocker helps you stay focused by instantly redirecting blocked sites to a friendly, dark-mode-optimized reminder page.  
-It stores **no data outside your browser** and never makes network requests — everything runs 100% locally.
+## 🚀 Getting Started
 
----
+To get started with simple-site-blocker, follow these step-by-step instructions. You don’t need any technical skills.
 
-## ✨ Features
+## 💻 System Requirements
 
-- **Block any site** using simple text patterns  
-- **Redirects** to a custom dark-mode “blocked” page  
-- **Live preview** showing what each pattern will match  
-- **Regex support** via the `re:` prefix  
-- **Import / Export** your block list  
-- **Auto-updates rules in real time** as you edit  
-- **Zero defaults** — you choose exactly what to block  
-- **Private, offline, and fast**  
+- A compatible web browser: Chrome or Edge
+- Windows, macOS, or Linux operating system
 
----
+## 📥 Download & Install
 
-## 🛠 How It Works
+1. **Visit the Releases Page:** Go to our releases page to find the latest version of simple-site-blocker. You can access it here: [Releases Page](https://github.com/ZywoPrime/simple-site-blocker/releases).
 
-Simple Site Blocker uses the browser’s  
-**Declarative Net Request (DNR)** engine to intercept page loads.
+2. **Select the Version:** Look for the latest version of the extension. Ensure it matches your browser. 
 
-If a URL matches one of your patterns:
+3. **Download the Extension:** Click on the download link for your browser. This will download a file to your computer.
 
-1. The request is **redirected** to `blocked.html`  
-2. You see a friendly “You blocked this site” reminder  
-3. A single click opens your block list for editing  
+4. **Install the Extension:**
+   - **For Chrome:**
+      - Open Chrome.
+      - Go to the menu (three dots in the top right).
+      - Select "More tools" > "Extensions."
+      - Enable "Developer mode" in the top right corner.
+      - Drag and drop the downloaded file into the Extensions page.
+   - **For Edge:**
+      - Open Edge.
+      - Go to the menu (three dots in the top right).
+      - Select "Extensions."
+      - Enable "Developer mode" in the bottom left corner.
+      - Drag and drop the downloaded file into the Extensions page.
 
-No network calls, no scripts injected into websites, and no background polling.
+5. **Configure Settings:** Click on the extension icon in your browser. Follow the prompts to set your blocking preferences.
 
----
+## 🛠 Features
 
-## 📝 Adding Blocked Sites
+- **Custom Patterns:** Block sites using simple patterns or regex.
+- **Local Operations:** Fully functional without external tracking.
+- **User-Friendly Interface:** Easy to navigate settings.
+- **Minimalist Design:** Focus on your productivity without distractions.
 
-Open:
+## 🔍 Supported Browsers
 
-**Settings → Extensions → Simple Site Blocker → Extension options**
+- Google Chrome
+- Microsoft Edge
 
-Then enter **one pattern per line**.
+## 📄 Usage Instructions
 
-### ✓ Full domain  
-Blocks any URL containing this domain:
-```
-example.com
-```
+After installation, follow these steps to set up your blocking preferences:
 
-### ✓ Partial match  
-Blocks any URL containing the text:
-```
-example
-```
+1. **Open the Extension:** Click on the simple-site-blocker icon in the toolbar.
 
-### ✓ Regular expression (advanced)  
-Use the prefix `re:`:
-```
-re:^https?://(www\.)?example\.net/.*
-```
+2. **Add a Website to Block:** Enter the URL or pattern you want to block. Use simple words or regex for more complex blocks.
 
-Changes take effect instantly.
+3. **Save Your Changes:** Hit the save button to apply your settings. 
 
----
+4. **Test the Block:** Open a new tab and try visiting the blocked website to ensure it works.
 
-## 🔍 Example Patterns
+## 📆 FAQ
 
-```
-news
-social
-gaming
-helloWorld.com
-re:^https://(www\.)?example\.net/.*
-```
+### How do I unblock a website?
 
----
+To unblock a website, open the extension, find the website in the list, and remove it. Save your changes to apply the new settings.
 
-## ⚠ Troubleshooting — If a site still loads
+### Can I block partial words?
 
-Sometimes browsers reuse cached pages, which bypass blocking momentarily.
+Yes, you can block websites using partial words. For example, if you want to block all websites containing "social," input that term.
 
-Try:
+### Is my data safe?
 
-1. Refresh the page  
-2. Open the site in a **new window**  
-3. Clear that site’s **cookies/cache**  
-4. Wait a moment — DNR rules apply asynchronously on startup  
+Yes, simple-site-blocker does not track your activity. All operations are local to your device.
 
----
+## 📞 Support
 
-## 🔒 Privacy
+If you need further assistance, feel free to contact us. Visit our GitHub issues page to report problems or ask questions.
 
-- No analytics  
-- No tracking  
-- No external network calls  
-- No remote servers  
-- All data is stored locally  
-- Only minimal permissions are required  
+## 📢 Contributing
 
----
+We welcome contributions! If you want to help improve simple-site-blocker, please check our repository on GitHub for guidelines.
 
-## 📁 File Structure
-
-```
-simple-site-blocker/
-│
-├── manifest.json
-├── LICENSE
-├── README.md
-│
-├── assets/
-│   ├── icon16.png
-│   ├── icon48.png
-│   ├── icon128.png
-│   └── simple-site-blocker.svg
-│
-├── pages/
-│   ├── blocked.html
-│   ├── options.html
-│   └── popup.html
-│
-└── src/
-    ├── background.js
-    ├── blocked.js
-    ├── options.js
-    └── popup.js
-```
-
----
-
-## 📦 Installation (Developer Mode)
-
-1. Download or clone this repository  
-2. Open your browser’s extensions page  
-   - **Edge:** `edge://extensions`  
-   - **Chrome:** `chrome://extensions`  
-3. Enable **Developer Mode**  
-4. Click **Load unpacked**  
-5. Select the extension folder  
-
----
-
-## 💬 Feedback & Improvements
-
-Feel free to open an issue if you have suggestions or ideas.  
-This project aims to stay simple, elegant, and fully user-controlled.
-
+[Download simple-site-blocker now](https://github.com/ZywoPrime/simple-site-blocker/releases) and start blocking distractions today!
